@@ -8,7 +8,7 @@
 
 ## 1) Як установити проєкт
 
-Вимоги: **Docker** + **Docker Compose**.
+Вимоги: **Docker** + **Docker Compose** + (бажано) **make**.
 
 Примітка: **тестував лише на Linux**.
 
@@ -24,6 +24,13 @@ make init
 make start
 ```
 
+Що роблять команди:
+
+- `make init` — збірка образу `app` + `composer install`
+- `make start` — старт усіх контейнерів (`app`, `mongo`, `elasticsearch`)
+- `make ssh` — зайти в `app` контейнер
+- `make stop` — зупинити/видалити контейнери
+
 ### Windows (інструкція)
 
 Працювати має так само через Docker, але **я це не тестував**.
@@ -37,7 +44,13 @@ docker compose -f docker/docker-compose.yml up -d --build
 docker compose -f docker/docker-compose.yml exec app bash
 ```
 
-Далі команди з розділу **2)** виконуються вже всередині контейнера.
+Далі (всередині контейнера) один раз постав залежності:
+
+```bash
+composer install
+```
+
+Після цього команди з розділу **2)** виконуються вже всередині контейнера.
 
 ## 2) Команди для перевірки функціональності
 
@@ -68,6 +81,16 @@ php yii index/index/transfer 500
 ```bash
 php yii aggregation/report
 ```
+
+## 4) Налаштування через змінні середовища (Docker)
+
+У `docker/docker-compose.yml` задано дефолтні змінні:
+
+- `XLSX_PATH`: `/app/data/input.xlsx`
+- `MONGO_DSN`: `mongodb://mongo:27017`
+- `MONGO_DB`: `datamind`
+- `ES_HOST`: `http://elasticsearch:9200`
+- `ES_INDEX`: `datamind_rows`
 
 ## 3) Бібліотеки та підходи, які використав (і чому)
 
