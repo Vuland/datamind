@@ -1,0 +1,43 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/php/Dockerfile
+    working_dir: /app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../:/app:delegated
+      - ~/.composer-docker/cache:/tmp/composer-cache:delegated
+    environment:
+      APP_ENV: dev
+      XLSX_PATH: /app/data/input.xlsx
+      MONGO_DSN: mongodb://mongo:27017
+      MONGO_DB: datamind
+      ES_HOST: http://elasticsearch:9200
+      ES_INDEX: datamind_rows
+    depends_on:
+      - mongo
+      - elasticsearch
+    command: ["sleep", "infinity"]
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.26
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+volumes:
+  mongo-data:
+  es-data:
+
