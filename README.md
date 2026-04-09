@@ -16,10 +16,19 @@
 
 - `data/input.xlsx`
 
-Запуск:
+Запуск (Linux/macOS):
 
 ```bash
+mkdir -p /var/www/datamind
 cd /var/www/datamind
+git clone <repo_url> .
+make init
+make start
+```
+
+Якщо репозиторій вже клонований і ти вже в ньому, достатньо:
+
+```bash
 make init
 make start
 ```
